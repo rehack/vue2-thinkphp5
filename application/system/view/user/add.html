@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Examples</title>
+    <link href="__ROOT__static/layui/css/layui.css" rel="stylesheet">
+    <link href="http://res.layui.com/css/global.css?t=1484130829910" rel="stylesheet">
+</head>
+
+<body>
+    <div class="layui-layout layui-layout-admin">
+        {include file="public/header" /} {include file="public/side" /}
+        <div class="layui-body site-demo">
+            <form class="layui-form" action="">
+                <div class="site-title">
+                    <fieldset>
+                        <legend><a name="input">添加用户</a></legend>
+                    </fieldset>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">QQ号</label>
+                    <div class="layui-inline">
+                        <input type="text" name="title" required lay-verify="required" placeholder="请输入qq号码" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">微信号</label>
+                    <div class="layui-inline">
+                        <input type="text" name="title" required lay-verify="required" placeholder="请输入微信号码" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">交易金额</label>
+                    <div class="layui-inline">
+                        <input type="text" name="title" required lay-verify="required" placeholder="请输入交易金额" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">交易时间</label>
+                    <div class="layui-inline">
+                        <input type="text" name="title" required lay-verify="required" placeholder="请输入交易金额" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">ss账号端口</label>
+                    <div class="layui-inline">
+                        <input type="text" name="title" required lay-verify="required" placeholder="请输入ss账号端口" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">账单周期</label>
+                    <div class="layui-inline">
+                        <select name="city" lay-verify="">
+                            <option value="1">年付</option>
+                            <option value="2">月付</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">服务器ip</label>
+                    <div class="layui-inline">
+                        <select name="city" lay-verify="">
+                            <option value="1">172.246.226.69</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                   <div class="layui-input-block">
+                     <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                   </div>
+                 </div>
+            </form>
+        </div>
+        {include file="public/footer" /}
+    </div>
+</body>
+
+</html>

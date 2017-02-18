@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Examples</title>
+    <link href="__ROOT__static/layui/css/layui.css" rel="stylesheet">
+    <link href="http://res.layui.com/css/global.css?t=1484130829910" rel="stylesheet">
+</head>
+
+<body>
+    <div class="layui-layout layui-layout-admin">
+        {include file="public/header" /}
+        {include file="public/side" /}
+
+        <div class="layui-body site-demo">
+            <p>账号列表</p>
+            <table class="layui-table" lay-even>
+                <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>QQ号</th>
+                        <th>微信号</th>
+                        <th>交易金额</th>
+                        <th>账单时间</th>
+                        <th>账单周期</th>
+                        <th>下次付款日期</th>
+                        <th>服务器ip</th>
+                        <th>ss账号端口</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {volist name='data' id='vo'}
+                    <tr>
+                        <td>{$i}</td>
+                        <td>{$vo.qqnum}</td>
+                        <td>{$vo.wechat}</td>
+                        <td>{$vo.money}</td>
+                        <td>{$vo.btime}</td>
+                        <td>{$vo.bcycle}</td>
+                        <td>{$vo.etime}</td>
+                        <td>{$vo.sip}</td>
+                        <td>{$vo.ssport}</td>
+                    </tr>
+                    {/volist}
+                </tbody>
+            </table>
+            <div style="text-align: center;">{$data->render()}</div>
+        </div>
+        {include file="public/footer" /}
+    </div>
+
+
+
+</body>
+
+</html>

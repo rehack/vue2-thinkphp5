@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>客户数据</title>
+<link rel="stylesheet" href="__PUBLIC__static/bootstrap/css/bootstrap.full.css">
+<link rel="stylesheet" href="__PUBLIC__static/bootstrap/css/bootstrap-datepicker.min.css">
+<link href="__PUBLIC__static/easyui/css/easyui.css" rel="stylesheet" type="text/css" />
+<link href="__PUBLIC__static/easyui/css/icon.css" rel="stylesheet" type="text/css" />
+<script src="__PUBLIC__static/easyui/js/jquery.min.js" type="text/javascript"></script>
+<script src="__PUBLIC__static/easyui/js/jquery.easyui.min.js" type="text/javascript"></script>
+<script src="__PUBLIC__static/easyui/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+<script src="__PUBLIC__static/easyui/js/datagrid-detailview.js"></script>
+
+
+<script src="__PUBLIC__static/bootstrap/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__static/bootstrap/js/bootstrap-datepicker.min.js"></script>
+<script src="__PUBLIC__static/bootstrap/js/bootstrap-datepicker.zh-CN.min.js"></script>
+<style>
+    body{margin: 0;padding: 0;}
+    /* .yes{color: green;}
+    .no{color: red;}
+    .status{width: 16px;height: 15px;display: inline-block;font-size: 0px;} */
+    .glyphicon-ok{color: #5cb85c;}
+    .glyphicon-remove{color: #f0ad4e;}
+    .money{font-weight: bold;color: #f00;}
+    td{text-align: center;}
+    /* .datagrid-header{position: fixed;} */
+    .form-group{padding-bottom: 15px;}
+    .control-label{text-align: right;/* width: 20%; */margin-right: 2%;}
+    .form-control{width: 60%!important;}
+    .line{border-bottom: 1px dashed #ccc;text-align: center;color: #888;margin-bottom: 20px;}
+    .btns{text-align: center;}
+    #msg{color: #f00;}
+    /* 冲突样式重置 */
+    .panel-header{width: 100%!important;}
+    .panel-body{width: 100%!important;}
+    .glyphicon{margin-right: 5px;}
+    /*bootstrap兼容问题和easyui的bug*/
+    /* .panel-header, .panel-body {
+        border-width: 0px;
+    }
+    .datagrid,.combo-p{
+        border:solid 1px #D4D4D4;
+    }
+    .datagrid *{
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
+    } */
+</style>
+
+</head>
+<body>
+    <table id="dg" class="" title="客户消费情况表">
+    </table>
+    <div id="toolbar" style="display: none">
+        <div style="margin-bottom:5px">
+            <div style="margin-bottom: 8px;">
+                <a href="javascript:;" class="easyui-menubutton" menu="#mm1"><span class="glyphicon glyphicon-plus-sign"></span>添加</a>
+                <div id="mm1" style="width:150px;">
+                    <div iconCls="icon-undo" data-toggle="modal" data-target="#userAddModal">新增客户</div>
+                    <div class="menu-sep"></div>
+                    <div iconCls="icon-redo" id="addCon">新增消费</div>
+                </div>
+                <a class="easyui-linkbutton" id="openEditModal" plain="true" title="编辑客户"><span class="glyphicon glyphicon-edit"></span>编辑客户</a>
+                <a id="reload" class="easyui-linkbutton" plain="true" title="刷新数据"><span class="glyphicon glyphicon-refresh"></span>刷新数据</a>
+                <a href="{:url('')}" class="easyui-linkbutton" plain="true" target="_blank" title="全屏显示表格"><span class="glyphicon glyphicon-fullscreen"></span>全屏显示</a>
+                <a href="{:url('export')}" class="easyui-linkbutton" plain="true" target="_self"><span class="glyphicon glyphicon-export"></span>导出数据</a>
+            </div>
+            <div class="btn-toolbar" role="toolbar" style="margin-bottom: 8px;">
+                <div class="btn-group btn-group-sm timebtns">
+                    <button type="button" class="btn btn-default" data-time="today">今日</button>
+                    <button type="button" class="btn btn-default" data-time="yesterday">昨日</button>
+                    <button type="button" class="btn btn-default" data-time="week">本周</button>
+                    <button type="button" class="btn btn-default" data-time="last week">上周</button>
+                    <button type="button" class="btn btn-default" data-time="month">本月</button>
+                    <button type="button" class="btn btn-default" data-time="last month">上月</button>
+                    <button type="button" class="btn btn-default" data-time="last year">去年</button>
+                </div>
+            </div>
+        </div>
+        <div style="margin-bottom: 8px;">
+            模糊查询（姓名/手机号）：<input id="mohu" class="easyui-textbox" type="text" style="width: 100px">
+            消费金额：<input id="startmoney" class="easyui-textbox" style="width:100px">
+            到：<input id="endmoney" class="easyui-textbox" style="width:100px">
+            <!-- To：<input id="endmoney" class="easyui-datebox" style="width:100px"> -->
+            <!-- Language：
+            <select class="easyui-combobox" panelHeight="auto" style="width:100px">
+                <option value="java">Java</option>
+                <option value="c">C</option>
+                <option value="basic">Basic</option>
+                <option value="perl">Perl</option>
+                <option value="python">Python</option>
+            </select> -->
+            <a href="javascript:;" id="search" class="easyui-linkbutton"><span class="glyphicon glyphicon-search"></span>Search</a>
+        </div>
+    </div>
+
+    <!-- 添加用户表单 -->
+    {include file="public/userAddForm"}
+    <!-- 添加消费表单 -->
+    <div class="modal fade" id="addConModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title glyphicon glyphicon-tags" id="addcontitle">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-inline" role="form" id="addconform">
+                        <div class="row">
+                            <!-- <div class="col-md-4 form-group">
+                                <label class="control-label">网电咨询师</label>
+                                <select name="wdzx_id" required1="required" class="form-control">
+                                    <option value="">请选择</option>
+                                    {/*volist name="wdzxs" id="wd" }
+                                    <option value="{$wd.id}">{//$wd.wd_name}</option>
+                                    {/volist*/}
+                                </select>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">前台咨询师</label>
+                                <select name="qtzx_id" required1="required" class="form-control">
+                                    <option value="">请选择</option>
+                                    {volist name="qtzxs" id="qt" }
+                                    <option value="{$qt.id}">{//$qt.qt_name}</option>
+                                    {/volist}
+                                </select>
+                            </div> -->
+                            <div class="col-md-6 form-group">
+                                <label class="control-label">接诊医生</label>
+                                <select name="doctor_id" required1="required" class="form-control">
+                                    <option value="">请选择</option>
+                                    {volist name="doctors" id="d" }
+                                    <option value="{$d.id}">{$d.doctor}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="control-label">就诊病种</label>
+                                <select name="disease_id" required1="required" class="form-control">
+                                    <option value="">请选择</option>
+                                    {volist name="disease" id="c" }
+                                    <option value="{$c.id}">{$c.disease_name}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label class="control-label" for="jz_time">消费日期</label>
+                                <input class="form-control datetimepicker" id="jz_time" name="jz_time" type="text" placeholder="选择日期" required1="required" />
+                                <span class="add-on"><i class="icon-remove"></i></span>
+                                <span class="add-on"><i class="icon-calendar"></i></span>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="control-label" for="money">消费金额</label>
+                                <input class="form-control" id="money" type="text" name="money" value="0" placeholder="消费金额,无消费填0" required1="required" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label class="control-label" for="ill_desc">病情描述</label>
+                                <textarea id="ill_desc" class="form-control" name="ill_desc" rows="3" required1="required"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <span class="pull-left text-danger addconmsg"></span>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="addconbtn">保存</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="addConDialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">消费记录添加成功！</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="secAddCon">继续添加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑表单 -->
+    {include file="public/editor" /}
+
+<script>
+    // datagrid部分js
+    $(function() {
+        // 主要数据
+        $('#dg').datagrid({
+            iconCls: 'icon-list',
+            autoRowHeight: false,
+            // nowrap: false,
+            url: '{:url('returndata')}'+'&r='+Math.random(),
+            columns:[[
+                // {field:'id',title:'ID',width:1,width:'auto'},
+                {field:'checkbox',checkbox:true},
+                {field:'name',title:'姓名',width:80,halign:'center',align:'center'},
+                // {field:'usersn',title:'客户编号',width:100},
+                {field:'status',title:'成交',formatter:statusformater,align:'center',width:45},
+                {field:'telephone',title:'手机号码',width:80},
+                {field:'sex',title:'性别',width:45},
+                {field:'birthday',title:'出生日期',sortable:true,width:70},
+                {field:'age',title:'年龄',width:40},
+                {field:'province_name',title:'所在省份',width:70},
+                {field:'city_name',title:'所在市区',sortable:true,width:80},
+                {field:'county_name',title:'所在区县',width:100},
+                {field:'dev',title:'开发渠道',width:70},
+                {field:'source_name',title:'信息来源',width:70},
+                {field:'tool',title:'咨询工具',width:70},
+                {field:'wdname',title:'最近一次网电咨询师',width:100},
+                {field:'qtname',title:'最近一次现场咨询师',width:100},
+                {field:'doctor',title:'最近一次接诊医生',width:100},
+                {field:'disease_name',title:'最近一次就诊病种',width:100},
+                {field:'jz_time',title:'最近一次就诊时间',width:100},
+                {field:'summoney',title:'消费总金额(元)',sortable:true,formatter:function(value){return '<span class="money">'+value+'</span>';},width:100},
+                {field:'create_time',title:'登记时间',width:110}
+            ]],
+            toolbar: "#toolbar",
+            fitColumns: true, //表格宽度自适应
+            rownumbers: true,
+            pagination: true, //分页组件
+            pageSize: 30, //初始化显示条数
+            pageList: [10, 30,50, 100, 200],
+            loadMsg: '玩命加载数据中......',
+            // striped:true, //斑马线效果
+            singleSelect: true, //单选
+            // method: 'get',
+            // pagePosition:'both'
+            // SelectOnCheck:false
+            /*loadFilter: function(data){
+                console.info(data);
+                return data;
+
+            }*/
+
+            // 子网络
+            view: detailview,
+
+            onExpandRow: function(index, row) {
+                var ddv = $(this).datagrid('getRowDetail', index).find('table.ddv');
+                ddv.datagrid({
+                    url: '{:url("Consumption/getcpdetail")}?uid='+row.id+'&r='+Math.random(),
+                    fitColumns: true,
+                    singleSelect: true,
+                    rownumbers: true,
+                    loadMsg: '正在玩命加载详细列表......',
+                    height: 'auto',
+                    showFooter: true,
+                    columns: [[
+                        {field: 'footer',title: '',width: 100},
+                        {field: 'money',title: '本次消费金额(元)',width: 100},
+                        {field: 'wd',title: '网电咨询师',width: 100},
+                        {field: 'qt',title: '现场咨询师',width: 100},
+                        {field: 'doctor',title: '接诊医生',width: 100},
+                        {field: 'disease_name',title: '就诊病种',width: 100},
+                        {field: 'ill_desc',title: '病情描述',width: 100},
+                        {field: 'jz_time',title: '就诊时间',width: 100},
+                        {field: 'create_time',title: '登记时间',width: 100},
+                    ]],
+                    onResize: function() {
+                        $('#dg').datagrid('fixDetailRowHeight', index);
+                    },
+                    onLoadSuccess: function(data) {
+                        // console.log(data);
+                        setTimeout(function() {
+                            $('#dg').datagrid('fixDetailRowHeight', index);
+                        }, 0);
+                    }
+                });
+                $('#dg').datagrid('fixDetailRowHeight', index);
+            },
+            detailFormatter: function(index, row) {
+                return '<div style="padding:2px"><table class="ddv" title="该客户消费明细列表"></table></div>';
+            }
+        });
+        // 刷新数据
+        $('#reload').on('click', function() {
+            $('#dg').datagrid('reload');
+        });
+
+
+    });
+
+    function statusformater(value, row, index) {
+        return row.summoney > 0 ? "<span class='glyphicon glyphicon-ok success'></span>" : "<span class='glyphicon glyphicon-remove'></span>";
+
+    }
+
+    // 表单部分js
+    $('#userAddModal').modal({
+        // backdrop: false,
+        show:false
+    })
+    $('.datetimepicker').datepicker({
+        language: 'zh-CN', //语言
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayHighlight: true,
+        todayBtn: "linked"
+    });
+    var link = function(nextdom, url, postdata, value, text) {
+        $.ajax({
+                url: url,
+                type: 'POST',
+                dataType: 'json',
+                data: postdata
+            })
+            .done(function(data) {
+                if (data) {
+                    // console.log(data);
+                    var html_temp = '';
+                    $.each(data, function(index, val) {
+                        html_temp += "<option value='" + val[value] + "'>" + val[text] + "</option>";
+                    });
+                    // console.info(html_temp);
+                    // nextdom.html("<option value='0'>请选择</option>" + html_temp);
+                    nextdom.html('');
+                    nextdom.append("<option value=''>请选择</option>" + html_temp);
+                }
+            })
+            .fail(function() {
+                console.log("error");
+            });
+    };
+
+
+    var initdata = function() {
+        var nextdom = $('#userAttrCity'),
+            url = "{:url('useradd/citylink')}",
+            pid = $("#userAttrArea").val(),
+            postdata = {
+                'province_id': pid
+            },
+            value = 'city_id',
+            text = 'city_name';
+        link(nextdom, url, postdata, value, text);
+    }
+    initdata();
+
+    // 点击省份下拉列表
+    $('#userAttrArea').change(function() {
+        $('#userAttrCounty').html('');
+        initdata();
+    });
+    // 点击市区下拉列表
+    $('#userAttrCity').change(function() {
+        var nextdom = $('#userAttrCounty'),
+            url = "{:url('useradd/countylink')}"
+        pid = $(this).val(),
+            postdata = {
+                'city_id': pid
+            },
+            value = 'county_id',
+            text = 'county_name';
+        link(nextdom, url, postdata, value, text);
+    });
+
+    $('#dev').change(function() {
+        var nextdom = $('#from'),
+            url = "{:url('link')}"
+        pid = $(this).val(),
+            postdata = {
+                'id': pid
+            },
+            value = 'id',
+            text = 'source_name',
+            link(nextdom, url, postdata, value, text);
+    });
+    // 添加用户
+    $('#submit').on('click', function() {
+        $.ajax({
+                url: '{:url("useradd/useradd")}',
+                type: 'POST',
+                dataType: 'html',
+                data: $('#formdata').serialize()
+            })
+            .done(function(data) {
+                // console.log(data);
+                $('#msg').html('提示信息：' + data);
+                if (data == '"客户添加成功!"') {
+                    $('#submit').attr('disabled', true);
+                    $('#formdata').get(0).reset();
+                    $('#msg').html('');
+                    // $('#myModal').modal('hide');
+                    $('#dg').datagrid('reload');
+                    $('#addUserDialog').modal();
+                    $('#submit').attr('disabled', false);
+                }
+            })
+            .fail(function() {
+                console.log("error");
+            });
+
+        return false;
+
+    });
+
+    // 添加就诊/消费记录
+    $('#addCon').on('click',function(event) {
+        var selected=$('#dg').datagrid('getSelected');
+        // console.info(selected)
+        if(selected){
+            $('#addcontitle').html('为客户: '+selected.name+'('+selected.telephone+') 添加就诊/消费记录');
+            $('#addConModal').modal();
+            $('#addconbtn').on('click', function(event) {
+
+                var addcondata=$('#addconform').serialize();
+                addcondata=addcondata+'&uid='+selected.id;
+
+                $.ajax({
+                    url: '{:url('Consumption/addcon')}',
+                    type: 'POST',
+                    dataType: 'html',
+                    data: addcondata
+                })
+                .done(function(conaddresult) {
+
+                    console.log(conaddresult)
+                    if(conaddresult=='"该用户消费记录添加成功！"'){
+                        $('#addconbtn').attr('disabled',true);
+                        $('#addconform').get(0).reset();
+                        $('#dg').datagrid('reload');
+                        $('#addConModal').modal('hide');
+                        $('#addConDialog').modal();
+                    }else{
+                        $('.addconmsg').html('提示信息：'+conaddresult);
+                    }
+
+                })
+                .fail(function() {
+                    console.log("error");
+                });
+                return false;
+            });
+            $('#secAddCon').on('click',function(){
+                $('#addConDialog').modal('hide');
+                $('#addConModal').modal();
+                $('#addconbtn').attr('disabled',false);
+                $('.addconmsg').html('');
+            })
+
+
+        }else{
+            alert('请先选择客户!');
+        }
+
+    });
+
+    // 搜索功能
+    $('#search').on('click',function(){
+        $('#dg').datagrid('load',{
+            name: $('#mohu').val(),
+            startmoney: $('#startmoney').val(),
+            endmoney: $('#endmoney').val(),
+        });
+    });
+
+    // 编辑功能
+    $('#openEditModal').on('click',function(){
+        var selected=$('#dg').datagrid('getSelected');
+        // console.info(selected)
+        if(selected){
+            $('#editorModal').modal();
+            $('#editTitle').html('修改客户: '+selected.name+'('+selected.telephone+') 资料');
+            $('#editForm')[0].reset();
+            $('#editForm input[name=name]').val(selected.name);
+            // console.log($('#editForm input[name=name]').val())
+            switch (selected.sex) {
+                case '男':
+                    selected.sex=1;
+                    break;
+                case '女':
+                    selected.sex=2;
+                    break;
+                case '未知':
+                    selected.sex=0;
+                    break;
+                default:
+                    selected.sex=selected.sex;
+                    break;
+            }
+            $('#editForm select[name=sex]').val(selected.sex);
+            // $('#editForm input[name=birthday]').val(selected.birthday);
+            $('#editForm input[name=birthday]').attr('value',selected.birthday);
+            $('#editForm input[name=telephone]').val(selected.telephone);
+            // console.info(selected)
+            $('#editForm select[name=province_id]').val(selected.province_id);//选中对应的省份
+            // $('#editForm .userAttrCity').val('');
+            // $('.city1').html('ee');
+            // initdata($('#editForm select[name=province_id]'));//加载对应的市级数据
+
+
+            var nextdom = $('.city1'),
+                url = "{:url('useradd/citylink')}",
+                // pid = $(".userAttrArea").val(),
+                pid = $('#editForm select[name=province_id]').val(),
+                postdata = {
+                    'province_id': pid
+                },
+                value = 'city_id',
+                text = 'city_name';
+            link(nextdom, url, postdata, value, text);
+            // console.log('pid:'+pid)
+
+            // $('#editForm select[name=province_id]').change()
+            // console.log($('#editForm .userAttrCity').html())
+            $('#editForm .userAttrCity').val(selected.city_id);//选中对应的市级
+            // $('.city1').val(selected.city_id);//选中对应的市级
+            // console.log($('.city1').html())
+            // console.log($('.city1').val())
+            $('.city1').val(selected.city_id);//选中对应的市级
+            // console.log(selected.city_id)
+            // $('#editorModal').modal();
+        }else{
+            alert('请选择用户');
+        }
+    });
+
+    // 时间查询
+    $('.timebtns button').on('click',function(){
+        var time=$(this).data('time');
+        // alert(time);
+        $('#dg').datagrid('load',{
+            selecttime: time
+        });
+
+    });
+
+    $(":reset").on('click',function(){
+        $('form')
+    })
+
+</script>
+
+
+
+
+</body>
+</html>

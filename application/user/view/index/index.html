@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>用户账号查询系统</title>
+<!-- <link href="//cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet"> -->
+<link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    [v-cloak]{
+        display: none;/* 这个指令可以隐藏未编译的 Mustache 标签直到实例准备完毕  处理页面加载或刷新时出现闪烁的现象 */
+    }
+    ul{margin-top: 20px;border-bottom: 2px solid #ccc;}
+    .tit{width: 35%;display: inline-block;margin-right: 15%;text-align: right;font-weight: bold;}
+</style>
+</head>
+<body>
+    <div class="container" id="app">
+        <div class="row">
+            <p class="title">请输入QQ号/微信号/手机号进行查询</p>
+        </div>
+        <div class="row">
+            <form class="form-inline" id="myForm">
+                <div class="form-group">
+                    <input type="text" class="form-control" v-model="keyword" required>
+                </div>
+                <button type="button" class="btn btn-default" v-on:click="load">查询</button>
+            </form>
+        </div>
+        <div class="row">
+            <!-- 这种表格的展示方式在移动端体验不是很友好，所以换成了li列表来展示 -->
+            <!-- <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>QQ号</th>
+                            <th>微信号</th>
+                            <th>金额(￥)</th>
+                            <th>账单日期</th>
+                            <th>账单周期</th>
+                            <th>下次付款日期</th>
+                            <th>服务器IP</th>
+                            <th>端口号</th>
+                        </tr>
+                    </thead>
+                    <tbody v-cloak>
+
+                        <tr v-for="value in msg">
+                            <td>{{ value.qqnum }}</td>
+                            <td>{{ value.wechat }}</td>
+                            <td>{{ value.money }}</td>
+                            <td>{{ value.btime }}</td>
+                            <td>{{ value.bcycle }}</td>
+                            <td>{{ value.etime }}</td>
+                            <td>{{ value.sip }}</td>
+                            <td>{{ value.ssport }}</td>
+                            <td>{{ msg }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div> -->
+            <ul class="list-group" v-for="value in msg" v-cloak>
+                <li class="list-group-item"><span class="tit">QQ号:</span>{{ value.qqnum }}</li>
+                <li class="list-group-item"><span class="tit">微信号:</span>{{ value.wechat }}</li>
+                <li class="list-group-item"><span class="tit">交易金额:</span>￥{{ value.money }}</li>
+                <li class="list-group-item"><span class="tit">账单日期:</span>{{ value.btime }}</li>
+                <li class="list-group-item"><span class="tit">账单周期:</span>{{ value.bcycle }}</li>
+                <li class="list-group-item"><span class="tit">下次付款日期:</span>{{ value.etime }}</li>
+                <li class="list-group-item"><span class="tit">服务器IP:</span>{{ value.sip }}</li>
+                <li class="list-group-item"><span class="tit">端口号:</span>{{ value.ssport }}</li>
+            </ul>
+        </div>
+    </div>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- <script src="//cdn.bootcss.com/axios/0.15.3/axios.min.js"></script> -->
+    <script>
+        /*var myForm = document.getElementById('myForm');
+        var formData = new FormData(myForm);//用HTML5 FormData对象获取表单数据 这里选择了用Vue双向绑定 v-model 还可以使用this.$refs*/
+        var vm=new Vue({
+            el: '#app',
+            data:{
+                keyword:'',
+                msg:[]
+            },
+
+            // 把data写成函数也可以
+            /*data:function(){
+                return {
+                    msg:[]
+                }
+            },*/
+            methods:{
+                load:function(){
+                    // 表单验证
+                    if(!this.keyword){
+                        alert('请输入您的QQ/微信/手机号再进行查询!');
+                        return false;
+                    }
+                    // console.log(this.keyword)
+                    // var _this=this;
+
+                    // 使用axios(vue官方推荐)向后台进行ajax请求
+                    axios.post("{:url('search')}", {
+                        // keyword:'lovely-1234567'
+                        keyword:this.keyword
+                    })
+
+                    // 这种处理数据的方式需要将Vue对象的this传进来var _this=this;，否则就使用下面的箭头函数方式来处理
+                    /*.then(function (response) {
+                        // console.log(response.data);
+                        // console.log(typeof(response.data));//object
+                        // console.log(_this.$data); //undefined
+                        // console.log(_this.msg); //undefined
+                        // console.log(_this);
+
+                        var m=_this.msg.concat(response.data)
+                        _this.$set(_this.$data,'msg',m);
+
+                    })*/
+                    .then(response => {
+                        console.log(response.data)
+                        if(response.data){
+                            // var m=this.msg.concat(response.data)
+                            this.$set(this.$data,'msg',response.data);
+                        }
+
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+                }
+
+            }
+
+        });
+        // vm.load();//页面加载就调用
+    </script>
+</body>
+</html>
