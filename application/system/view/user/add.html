@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>添加账号</title>
     <link href="__ROOT__static/layui/src/css/layui.css" rel="stylesheet">
-    <link rel="stylesheet" href="//res.layui.com/css/global.css?t=1488649590635" media="all">
+    <link rel="stylesheet" href="http://res.layui.com/css/global.css?t=1488649590635" media="all">
 </head>
 
 <body>
@@ -13,7 +13,7 @@
         {include file="public/header" /}
         {include file="public/side" /}
         <div class="layui-body site-demo">
-            <form class="layui-form" action="">
+            <form class="layui-form" action="" id="addForm">
                 <div class="site-title">
                     <fieldset>
                         <legend><a name="input">添加用户</a></legend>
@@ -22,37 +22,43 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">QQ号</label>
                     <div class="layui-inline">
-                        <input type="text" name="title" lay-verify="" placeholder="请输入qq号码" autocomplete="off" class="layui-input">
+                        <input type="text" name="qqnum" lay-verify="" placeholder="请输入qq号码" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">微信号</label>
                     <div class="layui-inline">
-                        <input type="text" name="title" lay-verify="" placeholder="请输入微信号码" autocomplete="off" class="layui-input">
+                        <input type="text" name="wechat" lay-verify="" placeholder="请输入微信号码" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">交易金额</label>
                     <div class="layui-inline">
-                        <input type="text" name="title" lay-verify="required number" placeholder="请输入交易金额" autocomplete="off" class="layui-input">
+                        <input type="text" name="money" lay-verify="required|number" placeholder="请输入交易金额" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">交易时间</label>
                     <div class="layui-inline">
-                        <input type="text" name="title" lay-verify="required date" placeholder="请输入交易金额" autocomplete="off" class="layui-input" onclick="layui.laydate({elem: this, istime: true, format: 'YYYY-MM-DD'})">
+                        <input type="text" name="btime" lay-verify="required|date" placeholder="请输入交易金额" autocomplete="off" class="layui-input" onclick="layui.laydate({elem: this, istime: true, format: 'YYYY-MM-DD'})">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">ss账号端口</label>
                     <div class="layui-inline">
-                        <input type="text" name="title" lay-verify="required number" placeholder="请输入ss账号端口" autocomplete="off" class="layui-input">
+                        <input type="text" name="ssport" lay-verify="required|number" placeholder="请输入ss账号端口" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">ss账号密码</label>
+                    <div class="layui-inline">
+                        <input type="text" name="sspwd" lay-verify="required" placeholder="请输入ss账号密码" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">账单周期</label>
                     <div class="layui-inline">
-                        <select name="city" lay-verify="">
+                        <select name="bcycle" lay-verify="">
                             <option value="年付">年付</option>
                             <option value="月付">月付</option>
                         </select>
@@ -61,14 +67,14 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">服务器ip</label>
                     <div class="layui-inline">
-                        <select name="city" lay-verify="">
-                          <option value="1">67.21.68.46</option>
+                        <select name="sip" lay-verify="">
+                          <option value="67.21.68.46">67.21.68.46</option>
                         </select>
                     </div>
                 </div>
                 <div class="layui-form-item">
                    <div class="layui-input-block">
-                     <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                     <button class="layui-btn" lay-submit lay-filter="go">立即提交</button>
                      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                    </div>
                  </div>
@@ -76,10 +82,43 @@
         </div>
         {include file="public/footer" /}
     </div>
-
+    <script src="http://apps.bdimg.com/libs/jquery/1.8.3/jquery.min.js"></script>
     <script>
-    layui.use('laydate', function(){
-    });
+        layui.use('laydate', function(){
+        });
+
+        // 表单提交
+        layui.use('form', function(){
+            var form = layui.form();
+
+            //各种基于事件的操作，下面会有进一步介绍
+            form.on('submit(go)', function(data){
+                console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+                console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+                console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+                var postdata=data.field;
+                $.ajax({
+                    url: '{:url("useraddfn")}',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: postdata,
+                })
+                .done(function(returndata) {
+                    if(returndata=='成功'){
+                        layer.msg('添加成功！');
+                    }else{
+                        layer.msg('添加失败！');
+                    }
+                    // console.log(returndata);
+                })
+                .fail(function() {
+                    layer.msg('发生错误！请重试');
+                });
+
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            });
+        });
+
     </script>
 </body>
 

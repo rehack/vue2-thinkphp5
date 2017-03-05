@@ -15,4 +15,17 @@ class User extends Base{
     public function useradd(){
         return $this->fetch('add');
     }
+
+    public function useraddfn(){
+        if(Request()->isPost()){
+            $postdata=input('post.');
+            $user=new usermodel;
+            // dump($postdata);die;
+            $res=$user->save($postdata);
+            // echo usermodel::getLastSql();
+            if($res){
+                return '成功';
+            }
+        }
+    }
 }
