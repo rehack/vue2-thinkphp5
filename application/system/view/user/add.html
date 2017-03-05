@@ -22,39 +22,39 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">QQ号</label>
                     <div class="layui-inline">
-                        <input type="text" name="title" required lay-verify="required" placeholder="请输入qq号码" autocomplete="off" class="layui-input">
+                        <input type="text" name="title" lay-verify="" placeholder="请输入qq号码" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">微信号</label>
                     <div class="layui-inline">
-                        <input type="text" name="title" required lay-verify="required" placeholder="请输入微信号码" autocomplete="off" class="layui-input">
+                        <input type="text" name="title" lay-verify="" placeholder="请输入微信号码" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">交易金额</label>
                     <div class="layui-inline">
-                        <input type="text" name="title" required lay-verify="required" placeholder="请输入交易金额" autocomplete="off" class="layui-input">
+                        <input type="text" name="title" lay-verify="required number" placeholder="请输入交易金额" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">交易时间</label>
                     <div class="layui-inline">
-                        <input type="text" name="title" required lay-verify="required" placeholder="请输入交易金额" autocomplete="off" class="layui-input">
+                        <input type="text" name="title" lay-verify="required date" placeholder="请输入交易金额" autocomplete="off" class="layui-input" onclick="layui.laydate({elem: this, istime: true, format: 'YYYY-MM-DD'})">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">ss账号端口</label>
                     <div class="layui-inline">
-                        <input type="text" name="title" required lay-verify="required" placeholder="请输入ss账号端口" autocomplete="off" class="layui-input">
+                        <input type="text" name="title" lay-verify="required number" placeholder="请输入ss账号端口" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">账单周期</label>
                     <div class="layui-inline">
                         <select name="city" lay-verify="">
-                            <option value="1">年付</option>
-                            <option value="2">月付</option>
+                            <option value="年付">年付</option>
+                            <option value="月付">月付</option>
                         </select>
                     </div>
                 </div>
@@ -76,6 +76,11 @@
         </div>
         {include file="public/footer" /}
     </div>
+
+    <script>
+    layui.use('laydate', function(){
+    });
+    </script>
 </body>
 
 </html>
