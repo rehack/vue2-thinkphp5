@@ -19,13 +19,18 @@ class User extends Base{
     public function useraddfn(){
         if(Request()->isPost()){
             $postdata=input('post.');
-            $user=new usermodel;
+
+            $btime=strtotime($postdata['btime']);
+            $etime=strtotime("+1 year",$btime);
+            // $postdata['btime']=strtotime($postdata['btime']);
+            $postdata['etime']=$etime;
             // dump($postdata);die;
+            $user=new usermodel;
             $res=$user->save($postdata);
             // echo usermodel::getLastSql();
-            if($res){
-                return '成功';
-            }
+
+
+            return $res?'成功':'失败';
         }
     }
 }

@@ -1,7 +1,8 @@
 <?php
 namespace app\user\controller;
 use think\Controller;
-use think\Db;
+// use think\Db;
+use app\system\model\User as usermodel;
 /**
 *
 */
@@ -14,8 +15,8 @@ class Index extends Controller
 
     public function search(){
         $keyword=input('keyword');
-        $userdata=Db::name('user')
-        ->where('qqnum|wechat',"{$keyword}")
+        // $userdata=Db::name('user')
+        $userdata=usermodel::where('qqnum|wechat',"{$keyword}")
         ->field('qqnum,wechat,money,btime,bcycle,etime,sip,ssport')
         ->select();
         return json($userdata);
