@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>添加账号</title>
     <link href="__ROOT__static/layui/src/css/layui.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://res.layui.com/css/global.css?t=1488649590635" media="all">
+    <link href="__ROOT__static/layui/global.css" rel="stylesheet">
 </head>
 
 <body>
@@ -68,7 +68,7 @@
                     <label class="layui-form-label">服务器ip</label>
                     <div class="layui-inline">
                         <select name="sip" lay-verify="">
-                          <option value="67.21.68.46">67.21.68.46</option>
+                          <option value="117.121.65.46">117.121.65.46</option>
                         </select>
                     </div>
                 </div>
@@ -82,7 +82,8 @@
         </div>
         {include file="public/footer" /}
     </div>
-    <script src="http://apps.bdimg.com/libs/jquery/1.8.3/jquery.min.js"></script>
+    <!-- <script src="http://apps.bdimg.com/libs/jquery/1.8.3/jquery.min.js"></script> -->
+    <script src="__ROOT__static/js/ajax.min.js"></script>
     <script>
         layui.use('laydate', function(){
         });
@@ -97,7 +98,28 @@
                 console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
                 console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
                 var postdata=data.field;
-                $.ajax({
+
+                ajax({
+                    type:"post",
+                    url:'{:url("useraddfn")}', //添加自己的接口链接
+                    data:postdata,
+                    timeOut:5000,
+                    before:function(){
+                      console.log("before");
+                    },
+                    success:function(returndata){
+                        if(returndata=='成功'){
+                            layer.msg('添加成功！');
+                        }else{
+                            layer.msg('添加失败！');
+                        }
+                    },
+                    error:function(){
+                        layer.msg('发生错误！请重试');
+                    }
+                });
+
+                /*$.ajax({
                     url: '{:url("useraddfn")}',
                     type: 'POST',
                     dataType: 'json',
@@ -113,7 +135,7 @@
                 })
                 .fail(function() {
                     layer.msg('发生错误！请重试');
-                });
+                });*/
 
                 return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
             });
