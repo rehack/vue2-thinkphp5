@@ -245,13 +245,19 @@ abstract class OneToOne extends Relation
                 }
             }
         }
+
         if (isset($list[$relation])) {
             $relationModel = new $model($list[$relation]);
+            $relationModel->setParent(clone $result);
+            $relationModel->isUpdate(true);
+
             if (!empty($this->bindAttr)) {
                 $this->bindAttr($relationModel, $result, $this->bindAttr);
             }
+        } else {
+            $relationModel = null;
         }
-        $result->setAttr(Loader::parseName($relation), !isset($relationModel) ? null : $relationModel->isUpdate(true));
+        $result->setRelation(Loader::parseName($relation), $relationModel);
     }
 
     /**
@@ -311,6 +317,5 @@ abstract class OneToOne extends Relation
      * @return void
      */
     protected function baseQuery()
-    {
-    }
+    {}
 }

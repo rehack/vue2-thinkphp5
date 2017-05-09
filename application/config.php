@@ -114,6 +114,8 @@ return [
     'request_cache'          => false,
     // 请求缓存有效期
     'request_cache_expire'   => null,
+    // 全局请求缓存排除规则
+    'request_cache_except'   => [],
 
     // +----------------------------------------------------------------------
     // | 模板设置
@@ -236,24 +238,4 @@ return [
         'var_page'  => 'page',
         'list_rows' => 15,
     ],
-
-    // 以下是自定义的配置:
-    // 模板输出替换
-    'view_replace_str'  =>  [
-        '__PUBLIC__'=>'/',
-        '__ROOT__' => '/',
-    ],
-
-    // 验证码配置
-    'captcha'  => [
-        // 使用中文验证码
-        // 'useZh' =>true,
-        // 字体大小
-        'fontSize' => 20,
-        // 验证码长度（位数）
-        'length'   => 4,
-        // 'imageW' =>80,
-        'useNoise' =>false,
-        // 'useCurve' =>false,
-    ]
 ];

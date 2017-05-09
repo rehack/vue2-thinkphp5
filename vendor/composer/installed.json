@@ -10,7 +10,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://packagist.phpcomposer.com/files/top-think/think-installer/4c6e1ebecd1afce3f4ccc47e147d61bbe1bf641d.zip",
+            "url": "https://files.phpcomposer.com/files/top-think/think-installer/4c6e1ebecd1afce3f4ccc47e147d61bbe1bf641d.zip",
             "reference": "4c6e1ebecd1afce3f4ccc47e147d61bbe1bf641d",
             "shasum": ""
         },
@@ -44,17 +44,17 @@
     },
     {
         "name": "topthink/framework",
-        "version": "v5.0.5",
-        "version_normalized": "5.0.5.0",
+        "version": "v5.0.8",
+        "version_normalized": "5.0.8.0",
         "source": {
             "type": "git",
             "url": "https://github.com/top-think/framework.git",
-            "reference": "86cc9378a0c46e66dabed6681f8b8de758585ae1"
+            "reference": "02f8e8a9099c534d1b2c38385fcf1fa5404694d4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://packagist.phpcomposer.com/files/top-think/framework/86cc9378a0c46e66dabed6681f8b8de758585ae1.zip",
-            "reference": "86cc9378a0c46e66dabed6681f8b8de758585ae1",
+            "url": "https://files.phpcomposer.com/files/top-think/framework/02f8e8a9099c534d1b2c38385fcf1fa5404694d4.zip",
+            "reference": "02f8e8a9099c534d1b2c38385fcf1fa5404694d4",
             "shasum": ""
         },
         "require": {
@@ -69,7 +69,7 @@
             "phpunit/phpunit": "4.8.*",
             "sebastian/phpcpd": "2.*"
         },
-        "time": "2017-01-23T05:59:21+00:00",
+        "time": "2017-04-28T09:33:15+00:00",
         "type": "think-framework",
         "installation-source": "dist",
         "autoload": {
@@ -106,7 +106,7 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://packagist.phpcomposer.com/files/top-think/think-captcha/0c55455df26a1626a60d0dc35d2d89002b741d44.zip",
+            "url": "https://files.phpcomposer.com/files/top-think/think-captcha/0c55455df26a1626a60d0dc35d2d89002b741d44.zip",
             "reference": "0c55455df26a1626a60d0dc35d2d89002b741d44",
             "shasum": ""
         },

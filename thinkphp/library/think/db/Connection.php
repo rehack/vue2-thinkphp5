@@ -137,18 +137,31 @@ abstract class Connection
     }
 
     /**
+     * 指定当前使用的查询对象
+     * @access public
+     * @param Query $query 查询对象
+     * @return $this
+     */
+    public function setQuery($query, $model = 'db')
+    {
+        $this->query[$model] = $query;
+
+        return $this;
+    }
+
+    /**
      * 创建指定模型的查询对象
      * @access public
-     * @param string $model 模型类名称
-     * @param string $queryClass 查询对象类名
      * @return Query
      */
-    public function getQuery($model = 'db', $queryClass = '')
+    public function getQuery($model = 'db')
     {
         if (!isset($this->query[$model])) {
-            $class               = $queryClass ?: $this->config['query'];
+            $class = $this->config['query'];
+
             $this->query[$model] = new $class($this, 'db' == $model ? '' : $model);
         }
+
         return $this->query[$model];
     }
 
@@ -340,13 +353,9 @@ abstract class Connection
     /**
      * 执行查询 返回数据集
      * @access public
-     * @param string    $sql sql指令
-     * @param array     $bind 参数绑定
-     * @param bool      $master 是否在主服务器读操作
-     * @param bool      $class 是否返回PDO对象
      * @param string        $sql sql指令
      * @param array         $bind 参数绑定
-     * @param boolean       $master 是否在主服务器读操作
+     * @param bool          $master 是否在主服务器读操作
      * @param bool          $pdo 是否返回PDO对象
      * @return mixed
      * @throws BindParamException
@@ -771,11 +780,31 @@ abstract class Connection
     /**
      * 是否断线
      * @access protected
-     * @param \PDOException  $e 异常
+     * @param \PDOException  $e 异常对象
      * @return bool
      */
     protected function isBreak($e)
     {
+        $info = [
+            'server has gone away',
+            'no connection to the server',
+            'Lost connection',
+            'is dead or not enabled',
+            'Error while sending',
+            'decryption failed or bad record mac',
+            'server closed the connection unexpectedly',
+            'SSL connection has been closed unexpectedly',
+            'Error writing data to the connection',
+            'Resource deadlock avoided',
+        ];
+
+        $error = $e->getMessage();
+
+        foreach ($info as $msg) {
+            if (false !== stripos($error, $msg)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -918,7 +947,7 @@ abstract class Connection
     {
         if (!empty($this->config['deploy'])) {
             // 采用分布式数据库
-            if ($master) {
+            if ($master || $this->transTimes) {
                 if (!$this->linkWrite) {
                     $this->linkWrite = $this->multiConnect(true);
                 }

@@ -11,7 +11,6 @@
 
 namespace think\model\relation;
 
-use think\Db;
 use think\db\Query;
 use think\Loader;
 use think\Model;
@@ -47,7 +46,14 @@ class HasMany extends Relation
         if ($closure) {
             call_user_func_array($closure, [ & $this->query]);
         }
-        return $this->relation($subRelation)->select();
+        $list   = $this->relation($subRelation)->select();
+        $parent = clone $this->parent;
+
+        foreach ($list as &$model) {
+            $model->setParent($parent);
+        }
+
+        return $list;
     }
 
     /**
@@ -84,7 +90,12 @@ class HasMany extends Relation
                 if (!isset($data[$result->$localKey])) {
                     $data[$result->$localKey] = [];
                 }
-                $result->setAttr($attr, $this->resultSetBuild($data[$result->$localKey]));
+
+                foreach ($data[$result->$localKey] as &$relationModel) {
+                    $relationModel->setParent(clone $result);
+                }
+
+                $result->setRelation($attr, $this->resultSetBuild($data[$result->$localKey]));
             }
         }
     }
@@ -108,7 +119,12 @@ class HasMany extends Relation
             if (!isset($data[$result->$localKey])) {
                 $data[$result->$localKey] = [];
             }
-            $result->setAttr(Loader::parseName($relation), $this->resultSetBuild($data[$result->$localKey]));
+
+            foreach ($data[$result->$localKey] as &$relationModel) {
+                $relationModel->setParent(clone $result);
+            }
+
+            $result->setRelation(Loader::parseName($relation), $this->resultSetBuild($data[$result->$localKey]));
         }
     }
 
