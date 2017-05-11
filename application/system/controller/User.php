@@ -21,7 +21,27 @@ class User extends Base{
             $postdata=input('post.');
 
             $btime=strtotime($postdata['btime']);
-            $etime=strtotime("+1 year",$btime);
+            $bcycle=input('post.bcycle');
+            $long=input('post.long');
+            $str='';
+
+            switch ($bcycle) {
+                case 'y':
+                    $str="+{$long} year";
+                    break;
+                case 'm':
+                    $str="+{$long} month";
+                    break;
+                case 'd':
+                    $str="+{$long} day";
+                    break;
+                default:
+                    # code...
+                    break;
+            }
+            $etime=strtotime($str,$btime);
+            // dump($etime) ;
+            // dump($str);die();
             // $postdata['btime']=strtotime($postdata['btime']);
             $postdata['etime']=$etime;
             // dump($postdata);die;

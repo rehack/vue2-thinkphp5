@@ -59,9 +59,16 @@
                     <label class="layui-form-label">账单周期</label>
                     <div class="layui-inline">
                         <select name="bcycle" lay-verify="">
-                            <option value="年付">年付</option>
-                            <option value="月付">月付</option>
+                            <option value="y">年付</option>
+                            <option value="m">月付</option>
+                            <option value="d">日付</option>
                         </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">购买时长</label>
+                    <div class="layui-inline">
+                        <input type="number" name="long" lay-verify="required" placeholder="多少天/月/年" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">

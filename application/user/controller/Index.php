@@ -17,7 +17,7 @@ class Index extends Controller
         $keyword=input('keyword');
         // $userdata=Db::name('user')
         $userdata=usermodel::where('qqnum|wechat',"{$keyword}")
-        ->field('qqnum,wechat,money,btime,bcycle,etime,sip,ssport')
+        ->field('qqnum,wechat,money,btime,long,bcycle,etime,sip,ssport')
         ->select();
         return json($userdata);
     }
